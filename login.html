@@ -1,330 +1,539 @@
-<DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-	<meta charset="UTF-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<title> جامعة الأزهر | نظام التحقق والخدمات</title>
-	
-	<!-- الأنماط الأساسية المقتبسة من البنية الأولى والثانية -->
-	<link rel="stylesheet" id="dashicons-css" href="https://dent.horus.edu.eg/wp-includes/css/dashicons.min.css?ver=7.1.3" media="all" />
-	<link rel="stylesheet" id="buttons-css" href="https://dent.horus.edu.eg/wp-includes/css/buttons.min.css?ver=7.1.3" media="all" />
-	<link rel="stylesheet" id="forms-css" href="https://dent.horus.edu.eg/wp-admin/css/forms.min.css?ver=7.1.3" media="all" />
-	<link rel="stylesheet" id="login-css" href="https://dent.horus.edu.eg/wp-admin/css/login.min.css?ver=7.1.3" media="all" />
-	
-	<link rel="icon" href="https://files.catbox.moe/52p74z.png" sizes="32x32" />
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+    
+    <head>
+        <!-- Path to manifest.json -->
+        <link rel="manifest" href="/manifest.json">
 
-	<style>
-		body.login {
-			-webkit-background-size: cover !important;
-			-moz-background-size: cover !important;
-			-o-background-size: cover !important;
-			background-size: cover !important;
-			background-image: url(https://dent.horus.edu.eg/wp-content/uploads/2021/08/login-background.jpg) !important;
-			background-position: center center !important;
-			background-repeat: no-repeat !important;
-			font-family: Tahoma, sans-serif;
-		}
-		#login h1 a, .login h1 a {
-			background-image: url(https://files.catbox.moe/52p74z.png) !important;
-			width: 150px !important;
-			max-width: 100%;
-			height: 150px;
-			background-size: 150px 150px;
-		}
-		.verify-msg { margin-top: 10px; font-weight: bold; font-size: 14px; }
-		.verify-msg.err { color: #d63638; }
-		.verify-msg.suc { color: #00a32a; }
-		.cert-container { background: #fff; padding: 20px; border-radius: 8px; margin-top: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-		.cert-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
-		.cert-item { background: #f9f9f9; padding: 8px; border: 1px solid #ddd; }
-		.cert-item .k { font-weight: bold; display: block; color: #555; font-size: 12px; }
-		.cert-item .v { color: #222; font-size: 14px; }
-		.sig-line { border-top: 1px solid #333; margin-top: 20px; padding-top: 5px; font-weight: bold; }
-		.sig-role { font-size: 12px; color: #666; }
-		.photo-upload-box {
-			margin-top: 15px;
-			padding: 10px;
-			background: #f0f0f1;
-			border: 1px dashed #ccc;
-			border-radius: 6px;
-			text-align: center;
-		}
-	</style>
-</head>
-<body class="login no-js login-action-login wp-core-ui admin-color-modern locale-ar">
+        <!-- Add to homescreen for Chrome on Android -->
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="application-name" content="MyU">
 
-	<div id="homeView">
-		<h1 class="screen-reader-text">Log In &lsaquo; Faculty of Dentistry</h1>
-		<div id="login">
-			<h1 role="presentation" class="wp-login-logo"><a href="index.html">Faculty of Dentistry</a></h1>
-		
-			<form id="verifyForm">
-				<p>
-					<label for="nationalId">الرقم القومي (14 رقمًا)</label>
-					<input type="text" id="nationalId" class="input ltr" value="" size="20" maxlength="14" required="required" />
-				</p>
+        <!-- Chrome for Android theme color -->
+        <meta name="theme-color" content="#493174">
 
-				<div class="user-pass-wrap">
-					<label for="password">كلمة المرور</label>
-					<div class="wp-pwd">
-						<input type="password" id="password" class="input password-input ltr" value="" size="20" required="required" />
-					</div>
-				</div>
+        <!-- Add to homescreen for Safari on iOS -->
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-title" content="MyU">
+        <meta name="apple-mobile-web-app-status-bar-style" content="default">
 
-				<p class="submit">
-					<button type="submit" id="verifyBtn" class="button button-primary button-large" style="width: 100%;">
-						<span class="btn-label">تحقق من الشهادة</span>
-					</button>
-				</p>
-				<p id="verifyMsg" class="verify-msg"></p>
-			</form>
+        <link rel="apple-touch-icon" href="/static/images/logo_icon.png" sizes="">
 
-			<p id="backtoblog">
-				<a href="index.html">&larr; العودة إلى موقع كلية   </a>
-			</p>
-		</div>
-	</div>
+        <!-- Tile for Win8 -->
+        <meta name="msapplication-TileColor" content="#fff">
+        <meta name="msapplication-TileImage" content="/static/images/logo_icon.png">
 
-	<!-- صفحة عرض الشهادة / النتيجة -->
-	<div id="certPage" hidden style="max-width: 800px; margin: 40px auto; padding: 20px;">
-		<div style="background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
-			<button id="backToHomeCrumb" class="button" style="margin-bottom: 20px;">&larr; رجوع للبحث</button>
-			
-			<!-- المحتوى العادي -->
-			<div id="normalCertContent">
-				<div style="display: flex; align-items: center; gap: 20px; border-bottom: 2px solid #eee; padding-bottom: 15px;">
-					<img id="certPhoto" src="" alt="صورة الخريج" style="width: 100px; height: 100px; object-fit: cover; border-radius: 50%; border: 2px solid #ccc;" />
-					<div>
-						<h2 id="certName" style="margin: 0; color: #1d2327;"></h2>
-						<p id="certCollege" style="margin: 5px 0 0; color: #646970;"></p>
-					</div>
-				</div>
+        <link rel="icon" sizes="" href="/static/images/logo_icon.png">
 
-				<!-- خيار تغيير الصورة مباشرة من الصفحة -->
-				<div class="photo-upload-box">
-					<label style="font-weight: bold; font-size: 13px; display: block; margin-bottom: 5px;">🖼️ تغيير الصورة الشخصية:</label>
-					<input type="file" id="photoInput" accept="image/*" style="font-size: 12px;" />
-				</div>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="description" content="Student Portal بوابة الخدمات الطلابية">
+        <meta name="author" content="contact@intlaqcit.com">
 
-				<div id="certGrid" class="cert-grid"></div>
+        <!-- Viewport metatags -->
+        <meta name="HandheldFriendly" content="true">
+        <meta name="MobileOptimized" content="320">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-				<div id="certSign" style="display: flex; justify-content: space-between; margin-top: 30px; text-align: center;"></div>
+        <title>MyU - بوابة الخدمات الطلابية</title>
 
-				<div style="margin-top: 30px; text-align: center;">
-					<button id="pdfBtn" class="button button-primary button-large"><span>📄</span> التحقق من الشهادة PDF</button>
-					<div id="pendingBox" hidden style="margin-top: 15px; padding: 10px; background: #f0f6fc; border: 1px solid #cce5ff;">
-						<p id="pendingRef" style="margin: 0; font-weight: bold; color: #004085;"></p>
-					</div>
-				</div>
-			</div>
+        <link rel="stylesheet" type="text/css" href="static/plugins/humane/themes/original.42d4b5dabc89.css">
+        <link rel="stylesheet" type="text/css" href="static/plugins/pace/pace.b254afc0ec5f.css">
+        <link rel="stylesheet" type="text/css" href="static/plugins/fontawesome-6.5.1/css/all.min.b7afd69ef09b.css">
+        <link rel="stylesheet" type="text/css" href="/static/plugins/bootstrap4/css/bootstrap.min.4804841e3364.css">
 
-			<!-- المحتوى المحظور -->
-			<div id="blockedCertContent" hidden style="text-align: center; padding: 20px;">
-				<img id="blockedPhoto" src="" alt="صورة" style="width: 100px; height: 100px; object-fit: cover; border-radius: 50%; margin-bottom: 15px;" />
-				<h2 id="blockedName" style="color: #d63638;"></h2>
-				<p id="blockedCollege" style="color: #646970;"></p>
-				<div style="background: #fcf0f1; border: 1px solid #f8d7da; padding: 15px; border-radius: 5px; margin-top: 20px; color: #721c24;">
-					<strong>عذراً، الملف محظور أو موقوف مؤقتاً.</strong>
-					<p style="margin: 5px 0 0;">الاسم: <span id="blockedDetailName"></span> | الرقم القومي: <span id="blockedDetailId"></span></p>
-					<p style="margin: 5px 0 0;">الكلية: <span id="blockedDetailCollege"></span></p>
-				</div>
-				<button id="verifyAgainBlocked" class="button" style="margin-top: 20px;">بحث جديد</button>
-			</div>
+        <!-- Custom styles Style -->
+        <link rel="stylesheet" class="custom" type="text/css" href="/static/css/style.css">
+        <link rel="stylesheet" type="text/css" href="/static/css/responsive.2fce2d1a9c32.css">
+        <link rel="shortcut icon" type="image/x-icon" href="/static/images/fav.ico">
 
-			<div style="text-align: center; margin-top: 30px;">
-				<button id="verifyAgain" class="button">إجراء بحث آخر</button>
-			</div>
-		</div>
-	</div>
+        <link rel="stylesheet" type="text/css" href="/static/core/login.8164998fbbbf.css">
+        <link rel="stylesheet" type="text/css" href="/static/core/bootstrap-switch/bootstrap-switch.910315507bc6.css">
 
-	<script>
-		/* ====== Script Integration (Data & Logic) ====== */
-		const CLIENT_1 = {
-			nationalId: '30008102701858',
-			password: 'mohamed#azhar.2545',
-			// يمكنك تغيير رابط الصورة الافتراضي هنا مباشر:
-			photo: 'https://files.catbox.moe/7q03rg.jpeg', 
-			name: 'محمد فواد سيد محمود',
-			college: 'كلية الدراسات الإسلامية والعربية   – جامعة  الازهر',
-			fields: {
-				'لرقم التعريفي ': '3221306',
-				'تاريخ الميلاد': '10/8/2000',
-				'محل الميلاد': 'ش الهواشم مركز فرشوط - قنا',
-				'الرقم القومي': '30008102701858',
-				'الجنسية': 'مصري',
-				'المؤهل': 'الإجازة العالية (الليسانس) ',
-				'الكلية': 'كلية الدراسات الإسلامية والعربية  – جامعة الازهر',
-				'التخصص والترقية': 'قصم الشريعة الإسلامية بقنا ',
-				'نظام الدراسة': 'ترم أول  ',
-				'لغة الدراسة': 'اللغة العربية',
-				'عدد سنوات الدراسة بالكلية': '  سنوات 4',
-				'سنة القيد': '2021',
-				'دور التخرج': 'دور مايو',
-				'سنة التخرج': '2025',
-				'المجموع': '754/900',
-				'التقدير العام': 'جيد ',
-				'النسبة المئوية': '77,11%'
-			},
-			signatures: [
-				{ name: 'أ.د.الضبع محمد أحمد   ', role: 'عميد كلية' },
-				{ name: 'أ.د. سلامة داود  ', role: 'رئيس جامعة الأزهر' },
-				{ name: 'أ.د.أحمد الطيب', role: ' شيخ الأزهر الشريف' }
-			]
-		};
+        <style>
+            body.login-screen {
+                background-image: url("https://files.catbox.moe/zxyplj.jpg"), url("/static/core/images/bg.34f06b4daa95.jpg");
+                background-size: cover;
+                background-position: center;
+            }
 
-		const CLIENT_2 = {
-			nationalId: '30008106322701858',
-			password: '52222222222222',
-			photo: 'https://files.catbox.moe/7q03rg.jpeg',
-			name: ' محمد فواد سيد محمود ',
-			college: 'كلية الدراسات الإسلامية والعربية – جامعة الأزهر',
-			blocked: true,
-			fields: {
-				'الرقم القومي': '30008102701858'
-			}
-		};
+            /* تنسيق صفحة البيانات والشهادة لتكون متناسقة تماماً مع الموقع */
+            .cert-container {
+                background: #ffffff;
+                border-radius: 12px;
+                box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+                padding: 25px;
+                margin: 30px auto;
+                max-width: 900px;
+                border-top: 5px solid #493174;
+            }
 
-		const ALL_CLIENTS = [CLIENT_1, CLIENT_2];
+            .cert-header {
+                display: flex;
+                align-items: center;
+                gap: 20px;
+                border-bottom: 2px solid #f0f0f0;
+                padding-bottom: 20px;
+                margin-bottom: 25px;
+            }
 
-		const homeView   = document.getElementById('homeView');
-		const certPage   = document.getElementById('certPage');
-		const verifyForm = document.getElementById('verifyForm');
-		const verifyBtn  = document.getElementById('verifyBtn');
-		const verifyMsg  = document.getElementById('verifyMsg');
-		const certGrid   = document.getElementById('certGrid');
-		const certSign   = document.getElementById('certSign');
-		const pdfBtn     = document.getElementById('pdfBtn');
-		const pendingBox = document.getElementById('pendingBox');
-		const pendingRef = document.getElementById('pendingRef');
+            .cert-photo-wrapper {
+                position: relative;
+                width: 120px;
+                height: 140px;
+                border-radius: 8px;
+                overflow: hidden;
+                border: 2px solid #ddd;
+                background: #f9f9f9;
+            }
 
-		const normalCertContent  = document.getElementById('normalCertContent');
-		const blockedCertContent = document.getElementById('blockedCertContent');
+            .cert-photo-wrapper img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
 
-		function digitsOnly(str){ return str.replace(/[^0-9]/g, ''); }
+            .cert-user-info h4 {
+                color: #493174;
+                font-weight: bold;
+                margin-bottom: 5px;
+            }
 
-		verifyForm.addEventListener('submit', function(e){
-			e.preventDefault();
-			verifyMsg.textContent = '';
-			verifyMsg.className = 'verify-msg';
+            .cert-user-info h6 {
+                color: #666;
+                margin-bottom: 0;
+            }
 
-			const nationalId = digitsOnly(document.getElementById('nationalId').value.trim());
-			const password = document.getElementById('password').value;
+            .cert-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+                gap: 15px;
+                margin-bottom: 25px;
+            }
 
-			if(nationalId.length !== 14){
-				verifyMsg.textContent = 'الرجاء إدخال رقم قومي صحيح مكوّن من 14 رقمًا.';
-				verifyMsg.classList.add('err');
-				return;
-			}
-			if(!password){
-				verifyMsg.textContent = 'الرجاء إدخال كلمة المرور.';
-				verifyMsg.classList.add('err');
-				return;
-			}
+            .cert-item {
+                background: #f8f9fa;
+                padding: 12px 15px;
+                border-radius: 6px;
+                border-right: 4px solid #493174;
+                display: flex;
+                flex-direction: column;
+            }
 
-			verifyBtn.disabled = true;
-			verifyBtn.querySelector('.btn-label').textContent = 'جارٍ التحقق...';
+            .cert-item .k {
+                font-size: 12px;
+                color: #777;
+                font-weight: 600;
+                margin-bottom: 3px;
+            }
 
-			setTimeout(() => {
-				verifyBtn.disabled = false;
-				verifyBtn.querySelector('.btn-label').textContent = 'تحقق من الشهادة';
+            .cert-item .v {
+                font-size: 15px;
+                color: #222;
+                font-weight: bold;
+            }
 
-				const client = ALL_CLIENTS.find(c => digitsOnly(c.nationalId) === nationalId && c.password === password);
+            .cert-signatures {
+                display: flex;
+                justify-content: space-around;
+                margin-top: 30px;
+                padding-top: 20px;
+                border-top: 1px dashed #ddd;
+            }
 
-				if(!client){
-					verifyMsg.textContent = 'بيانات الدخول غير صحيحة، أو لا توجد شهادة مرتبطة بهذا الرقم القومي.';
-					verifyMsg.classList.add('err');
-					return;
-				}
+            .sig-line {
+                font-weight: bold;
+                color: #333;
+            }
 
-				if(client.blocked){
-					renderBlockedCertificate(client);
-				} else {
-					renderCertificate(client);
-				}
-				goToCertPage();
-				verifyForm.reset();
-			}, 900);
-		});
+            .sig-role {
+                font-size: 13px;
+                color: #777;
+            }
 
-		function renderCertificate(rec){
-			normalCertContent.hidden = false;
-			blockedCertContent.hidden = true;
+            .breadcrumb-nav {
+                cursor: pointer;
+                color: #493174;
+                font-weight: bold;
+                margin-bottom: 15px;
+                display: inline-block;
+            }
 
-			document.getElementById('certPhoto').src = rec.photo;
-			document.getElementById('certName').textContent = rec.name;
-			document.getElementById('certCollege').textContent = rec.college;
+            .blocked-box {
+                background: #fff5f5;
+                border: 1px solid #feb2b2;
+                border-radius: 8px;
+                padding: 20px;
+                color: #c53030;
+            }
 
-			certGrid.innerHTML = '';
-			Object.entries(rec.fields).forEach(([k, v]) => {
-				const item = document.createElement('div');
-				item.className = 'cert-item';
-				item.innerHTML = '<span class="k">' + k + '</span><span class="v">' + v + '</span>';
-				certGrid.appendChild(item);
-			});
+            .pending-alert {
+                background: #eef6ff;
+                border: 1px solid #bee3f8;
+                color: #2b6cb0;
+                padding: 12px 15px;
+                border-radius: 6px;
+                margin-top: 15px;
+            }
 
-			certSign.innerHTML = '';
-			rec.signatures.forEach(s => {
-				const div = document.createElement('div');
-				div.innerHTML = '<div class="sig-line">' + s.name + '</div><div class="sig-role">' + s.role + '</div>';
-				certSign.appendChild(div);
-			});
+            .upload-btn-wrapper {
+                margin-top: 10px;
+            }
 
-			pendingBox.hidden = true;
-			pdfBtn.disabled = false;
-			pdfBtn.innerHTML = '<span>📄</span> التحقق من الشهادة PDF';
-		}
+            .upload-btn-wrapper input[type=file] {
+                font-size: 12px;
+            }
 
-		// إمكانية تغيير الصورة فوراً عند اختيار ملف من الجهاز
-		document.getElementById('photoInput').addEventListener('change', function(e) {
-			const file = e.target.files[0];
-			if (file) {
-				const reader = new FileReader();
-				reader.onload = function(evt) {
-					document.getElementById('certPhoto').src = evt.target.result;
-				};
-				reader.readAsDataURL(file);
-			}
-		});
+            footer {
+                margin-top: 40px;
+            }
 
-		function renderBlockedCertificate(rec){
-			normalCertContent.hidden = true;
-			blockedCertContent.hidden = false;
+            .verify-msg.err {
+                color: #dc3545;
+                font-weight: bold;
+            }
+        </style>
+    </head>
+    <body class="login-screen pace-done">
+        <main>
+            <div class="pace pace-inactive">
+                <div class="pace-progress" data-progress-text="100%" data-progress="99" style="width: 100%;">
+                    <div class="pace-progress-inner"></div>
+                </div>
+                <div class="pace-activity"></div>
+            </div>
+            
+    <!-- قسم الشاشة الرئيسية / تسجيل الدخول -->
+    <section id="homeView">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="login-box">
+                        <div class="login-content">
+                            <div class="login-user-icon">
+                                <img src="https://i.postimg.cc/mD7Qc3Qr/IMG-4977.jpg" style="width: 180px;"/>
+                            </div>
+                            <h3>بوابة الخدمات الطلابية</h3>
+                            <h5>نظام ابن الهيثم - جامعة العاصمة</h5>
+                        </div>
 
-			document.getElementById('blockedPhoto').src = rec.photo;
-			document.getElementById('blockedName').textContent = rec.name;
-			document.getElementById('blockedCollege').textContent = rec.college;
-			document.getElementById('blockedDetailName').textContent = rec.name;
-			document.getElementById('blockedDetailId').textContent = rec.nationalId;
-			document.getElementById('blockedDetailCollege').textContent = rec.college;
-		}
+                        <div class="login-form">
+                            <form id="verifyForm" novalidate class="form-horizontal ls_form">
+                                <input type="hidden" name="csrfmiddlewaretoken" value="kH6Oh7sytEihWWVS8oakuxAECfRuQkiwoMwwAyS5QJgsjXaL51NWrEffr9ebKVkw">
+                                <div class="input-group ls-group-input">
+                                    <input class="form-control" type="text" placeholder="الرقم القومي (14 رقم)" id="nationalId" name="txtUserName" maxlength="14" required>
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="fa fa-user"></i></span>
+                                    </div>
+                                </div>
 
-		function goToCertPage(){
-			homeView.hidden = true;
-			certPage.hidden = false;
-			window.scrollTo(0, 0);
-		}
+                                <div class="input-group ls-group-input">
+                                    <input type="password" placeholder="كلمة المرور" id="password" name="txtPassword" maxlength="50" class="form-control" required>
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="fa fa-lock"></i></span>
+                                    </div>
+                                </div>
 
-		function goToHome(){
-			certPage.hidden = true;
-			homeView.hidden = false;
-			verifyMsg.textContent = '';
-			window.scrollTo(0, 0);
-		}
+                                <div class="input-group ls-group-input login-btn-box mt-15">
+                                    <button type="submit" id="verifyBtn" class="btn ls-dark-btn col-md-12 col-sm-12 col-xs-12">
+                                        <i class="fa fa-key"></i> <span class="btn-label">تحقّق من الشهادة</span>
+                                    </button>
+                                    <input type="hidden" name="hdnLang" />
+                                    <a class="forgot-password" href="javascript:void(0)" style="font-size: 13px;">نسيت كلمة المرور</a>
+                                </div>
+                                <div id="verifyMsg" class="verify-msg text-center mt-2"></div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <p class="copy-right big-screen hidden-xs hidden-sm text-center">
+            جميع الحقوق محفوظة <span>©</span> <a href='https://www.intlaqcit.com/' target='_blank'>شركة إنطلاق لتقنية الإتصالات والمعلومات</a>
+            <br /><span class="footer-year">2020</span>
+        </p>
+    </section>
 
-		document.getElementById('verifyAgain').addEventListener('click', goToHome);
-		document.getElementById('verifyAgainBlocked').addEventListener('click', goToHome);
-		document.getElementById('backToHomeCrumb').addEventListener('click', goToHome);
+    <!-- صفحة عرض البيانات والشهادة -->
+    <section id="certPage" hidden>
+        <div class="container">
+            <div class="cert-container">
+                <div class="breadcrumb-nav" id="backToHomeCrumb">
+                    <i class="fas fa-arrow-right"></i> العودة للرئيسية / البحث
+                </div>
 
-		pdfBtn.addEventListener('click', () => {
-			pdfBtn.disabled = true;
-			pdfBtn.innerHTML = '<span>⏳</span> جارٍ الإرسال...';
-			setTimeout(() => {
-				pdfBtn.innerHTML = '<span>⏳</span> انتهاء المراجعة';
-				const ref = 'REQ-' + Math.floor(100000 + Math.random() * 900000);
-				pendingRef.textContent = 'رقم الطلب المرجعي: ' + ref;
-				pendingBox.hidden = false;
-			}, 700);
-		});
-	</script>
+                <!-- المحتوى العادي للشهادة -->
+                <div id="normalCertContent">
+                    <div class="cert-header">
+                        <div class="cert-photo-wrapper">
+                            <img id="certPhoto" src="https://via.placeholder.com/120x140" alt="صورة الطالب">
+                        </div>
+                        <div class="cert-user-info">
+                            <h4 id="certName">اسم الطالب</h4>
+                            <h6 id="certCollege">اسم الكلية / التخصص</h6>
+                            <div class="upload-btn-wrapper">
+                                <label style="font-size: 12px; margin-bottom: 2px; color: #555;">🖼️ تغيير الصورة الشخصية:</label>
+                                <input type="file" id="photoInput" accept="image/*" class="form-control-file">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- شبكة عرض البيانات -->
+                    <div class="cert-grid" id="certGrid"></div>
+
+                    <!-- التوقيعات -->
+                    <div class="cert-signatures" id="certSign"></div>
+
+                    <!-- زر الـ PDF ورسائل التجهيز -->
+                    <div class="mt-4 text-center">
+                        <button id="pdfBtn" class="btn btn-primary" style="background-color: #493174; border-color: #493174;">
+                            <span>📄</span> التحقق من الشهادة PDF
+                        </button>
+                    </div>
+
+                    <div id="pendingBox" class="pending-alert" hidden>
+                        <i class="fas fa-info-circle mr-1"></i>
+                        <span id="pendingRef"></span>
+                    </div>
+
+                    <div class="mt-3 text-center">
+                        <button id="verifyAgain" class="btn btn-outline-secondary btn-sm">إجراء بحث آخر</button>
+                    </div>
+                </div>
+
+                <!-- محتوى الحالة المحجوبة (Blocked) -->
+                <div id="blockedCertContent" hidden>
+                    <div class="blocked-box text-center">
+                        <div class="cert-photo-wrapper mx-auto mb-3">
+                            <img id="blockedPhoto" src="https://via.placeholder.com/120x140" alt="صورة الطالب">
+                        </div>
+                        <h4 id="blockedName"></h4>
+                        <p id="blockedCollege"></p>
+                        <div class="alert alert-danger mt-3">
+                            عفواً، تم حجب بيانات هذه الشهادة أو إيقافها مؤقتاً. يرجى مراجعة إدارة الشؤون الطلابية.
+                        </div>
+                        <ul class="list-unstyled text-right d-inline-block">
+                            <li><strong>الاسم:</strong> <span id="blockedDetailName"></span></li>
+                            <li><strong>الرقم القومي:</strong> <span id="blockedDetailId"></span></li>
+                            <li><strong>الكلية:</strong> <span id="blockedDetailCollege"></span></li>
+                        </ul>
+                        <div class="mt-3">
+                            <button id="verifyAgainBlocked" class="btn btn-secondary btn-sm">بحث جديد</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    </main>
+
+    <footer>
+        <a id="btnPrivacy" href="javascript:void(0)" data-toggle="modal" data-target="#privacyPolicyModal">
+            <i class="fas fa-shield-alt"></i> سياسة الخصوصية
+        </a>
+        <a id="btnTerms" href="javascript:void(0)" data-toggle="modal" data-target="#termsModal">
+            <i class="fas fa-file-contract"></i> الشروط والأحكام
+        </a>
+        <a id="btnAboutUs" href="javascript:void(0)" data-toggle="modal" data-target="#aboutUsModal">
+            <i class="fas fa-info-circle"></i> ماذا عنّا
+        </a>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="/static/js/lib/jquery-3.3.1.6a07da9fae93.js"></script>
+    <script src="/static/plugins/bootstrap4/js/bootstrap.min.b9c99b1ef93a.js"></script>
+
+    <script>
+        /* ====== Script Integration (Data & Logic) ====== */
+        const CLIENT_1 = {
+            nationalId: '289100113545513631',
+            password: 'ahmed#hel1212wan.2545',
+            photo: 'https://files.catbox.moe/tt7v0f.jpeg', 
+            name: 'احمد صابر على احمد ',
+            college: 'كلية الصيدلة – جامعة  حلوان',
+            fields: {
+                'الرقم التعريفي': '3221306',
+                'تاريخ الميلاد': '01/10/1989',
+                'محل الميلاد': 'كفر النجار مركز أبوكبير - الشرقية',
+                'الرقم القومي': '28910011313631',
+                'الجنسية': 'مصري',
+                'المؤهل': 'بكالوريوس العلوم الصيدلية',
+                'الكلية': 'كلية الصيدلة  – جامعة حلوان',
+                'التخصص والترقية': 'Pharmaceutical Sciences',
+                'نظام الدراسة': 'Credit Hours ',
+                'لغة الدراسة': 'اللغة الإنجليزية',
+                'عدد سنوات الدراسة بالكلية': '5 سنوات',
+                'سنة القيد': '2016',
+                'دور التخرج': 'Credit Hours ',
+                'سنة التخرج': '2015',
+                'المجموع': '754/900',
+                'التقدير العام': 'جيد',
+                'النسبة المئوية': '77.11%'
+            },
+            signatures: [
+                { name: 'أ.د.محمد إبراهيم صالح', role: 'عميد الكلية' },
+                { name: 'أ.د.محمد محروس عمارة', role: 'وكيل الكلية لشؤون التعليم والطلاب ' },
+                { name: 'أ.د.محمد عبده خضر', role: 'وكيل الكلية للدراسات العليا والبحوث' }
+            ]
+        };
+
+        const CLIENT_2 = {
+            nationalId: '28910011313631',
+            password: 'ahmed#helwan.2545',
+            photo: 'https://files.catbox.moe/tt7v0f.jpeg',
+            name: 'احمد صابر على احمد',
+            college: 'كلية الصيدلة – جامعة حلوان',
+            blocked: true,
+            fields: {
+                'الرقم القومي': '28910011313631'
+            }
+        };
+
+        const ALL_CLIENTS = [CLIENT_1, CLIENT_2];
+
+        const homeView   = document.getElementById('homeView');
+        const certPage   = document.getElementById('certPage');
+        const verifyForm = document.getElementById('verifyForm');
+        const verifyBtn  = document.getElementById('verifyBtn');
+        const verifyMsg  = document.getElementById('verifyMsg');
+        const certGrid   = document.getElementById('certGrid');
+        const certSign   = document.getElementById('certSign');
+        const pdfBtn     = document.getElementById('pdfBtn');
+        const pendingBox = document.getElementById('pendingBox');
+        const pendingRef = document.getElementById('pendingRef');
+
+        const normalCertContent  = document.getElementById('normalCertContent');
+        const blockedCertContent = document.getElementById('blockedCertContent');
+
+        function digitsOnly(str){ return str.replace(/[^0-9]/g, ''); }
+
+        verifyForm.addEventListener('submit', function(e){
+            e.preventDefault();
+            verifyMsg.textContent = '';
+            verifyMsg.className = 'verify-msg text-center mt-2';
+
+            const nationalId = digitsOnly(document.getElementById('nationalId').value.trim());
+            const password = document.getElementById('password').value;
+
+            if(nationalId.length !== 14){
+                verifyMsg.textContent = 'الرجاء إدخال رقم قومي صحيح مكوّن من 14 رقمًا.';
+                verifyMsg.classList.add('err');
+                return;
+            }
+            if(!password){
+                verifyMsg.textContent = 'الرجاء إدخال كلمة المرور.';
+                verifyMsg.classList.add('err');
+                return;
+            }
+
+            verifyBtn.disabled = true;
+            const btnLabel = verifyBtn.querySelector('.btn-label');
+            if(btnLabel) btnLabel.textContent = 'جارٍ التحقق...';
+
+            setTimeout(() => {
+                verifyBtn.disabled = false;
+                if(btnLabel) btnLabel.textContent = 'تحقّق من الشهادة';
+
+                const client = ALL_CLIENTS.find(c => digitsOnly(c.nationalId) === nationalId && c.password === password);
+
+                if(!client){
+                    verifyMsg.textContent = 'بيانات الدخول غير صحيحة، أو لا توجد شهادة مرتبطة بهذا الرقم القومي.';
+                    verifyMsg.classList.add('err');
+                    return;
+                }
+
+                if(client.blocked){
+                    renderBlockedCertificate(client);
+                } else {
+                    renderCertificate(client);
+                }
+                goToCertPage();
+            }, 900);
+        });
+
+        function renderCertificate(rec){
+            normalCertContent.hidden = false;
+            blockedCertContent.hidden = true;
+
+            document.getElementById('certPhoto').src = rec.photo;
+            document.getElementById('certName').textContent = rec.name;
+            document.getElementById('certCollege').textContent = rec.college;
+
+            certGrid.innerHTML = '';
+            Object.entries(rec.fields).forEach(([k, v]) => {
+                const item = document.createElement('div');
+                item.className = 'cert-item';
+                item.innerHTML = '<span class="k">' + k + '</span><span class="v">' + v + '</span>';
+                certGrid.appendChild(item);
+            });
+
+            certSign.innerHTML = '';
+            rec.signatures.forEach(s => {
+                const div = document.createElement('div');
+                div.className = 'text-center';
+                div.innerHTML = '<div class="sig-line">' + s.name + '</div><div class="sig-role">' + s.role + '</div>';
+                certSign.appendChild(div);
+            });
+
+            pendingBox.hidden = true;
+            pdfBtn.disabled = false;
+            pdfBtn.innerHTML = '<span>📄</span> التحقق من الشهادة PDF';
+        }
+
+        // إمكانية تغيير الصورة فوراً عند اختيار ملف من الجهاز
+        document.getElementById('photoInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    document.getElementById('certPhoto').src = evt.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        function renderBlockedCertificate(rec){
+            normalCertContent.hidden = true;
+            blockedCertContent.hidden = false;
+
+            document.getElementById('blockedPhoto').src = rec.photo;
+            document.getElementById('blockedName').textContent = rec.name;
+            document.getElementById('blockedCollege').textContent = rec.college;
+            document.getElementById('blockedDetailName').textContent = rec.name;
+            document.getElementById('blockedDetailId').textContent = rec.nationalId;
+            document.getElementById('blockedDetailCollege').textContent = rec.college;
+        }
+
+        function goToCertPage(){
+            homeView.hidden = true;
+            certPage.hidden = false;
+            window.scrollTo(0, 0);
+        }
+
+        function goToHome(){
+            certPage.hidden = true;
+            homeView.hidden = false;
+            verifyMsg.textContent = '';
+            document.getElementById('verifyForm').reset();
+            window.scrollTo(0, 0);
+        }
+
+        document.getElementById('verifyAgain').addEventListener('click', goToHome);
+        document.getElementById('verifyAgainBlocked').addEventListener('click', goToHome);
+        document.getElementById('backToHomeCrumb').addEventListener('click', goToHome);
+
+        pdfBtn.addEventListener('click', () => {
+            pdfBtn.disabled = true;
+            pdfBtn.innerHTML = '<span>⏳</span> جارٍ الإرسال...';
+            setTimeout(() => {
+                pdfBtn.innerHTML = '<span>⏳</span> انتهاء المراجعة';
+                const ref = 'REQ-' + Math.floor(100000 + Math.random() * 900000);
+                pendingRef.textContent = 'رقم الطلب المرجعي: ' + ref;
+                pendingBox.hidden = false;
+            }, 700);
+        });
+    </script>
 </body>
 </html>
